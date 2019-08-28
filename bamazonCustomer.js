@@ -9,20 +9,53 @@ var connection = mysql.createConnection({
     database: "bamazon",
 });
 
-connection.connect(function(err){
+connection.connect(function (err) {
     if (err) throw err;
-    console.log("connected as id " + connection.threadId +"\n");
+    console.log("connected as id " + connection.threadId + "\n");
     displayItems();
 });
 
 displayItems = () => {
-    connection.query("SELECT * FROM products", function(err, res) {
+    connection.query("SELECT * FROM products", function (err, res) {
         if (err) throw err;
 
         console.log("\n ----- Items for Sale ----- \n");
-        for (i=0; i<res.length; i++) {
-            console.log("item-id : " + res[i].item_id + "\n"+ " product : " + res[i].product_name + " Price : $" + res[i].price + "\n");
+        for (i = 0; i < res.length; i++) {
+            console.log("item-id : " + res[i].item_id + "\n" + " product : " + res[i].product_name + " Price : $" + res[i].price + "\n");
         }
-        connection.end();
+        questionPrompt();
+    })
+};
+
+questionPrompt = () => {
+
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "Enter the ID of the product you want to buy. ",
+            name: "purchaseID",
+            validate: (value) => {
+                if (!isNaN(value)) {
+                    return true;
+                } else {
+                    return false;
+                };
+            },
+        },
+        {
+            type: "input",
+            message: "How many units of this product would you like to buy ?",
+            name: "purchaseUnits",
+            validate: (value) => {
+                if (!isNaN(value)) {
+                    return true;
+                } else {
+                    return false;
+                };
+            },
+        },
+    ]).then((answers) => {
+        connection.end()
+
     })
 };
