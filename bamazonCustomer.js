@@ -83,13 +83,28 @@ questionPrompt = () => {
                                 item_id: answers.purchaseID
 
                             }
-                        ], 
-                        function(err, res) {
+                        ],
+                        function (err, res) {
                             if (err) throw err;
-                            console.log("Inventory updated " + res.affectedRows + " row affected"); 
+                            console.log("Inventory updated " + res.affectedRows + " row affected\n");
+                            inquirer.prompt([
+                                {
+                                    type: "list",
+                                    message: "Would you like to place another order ? ",
+                                    choices: ["YES", "NO"],
+                                    name: "nextOrderPropmt"
+                                }
+                            ]).then(function (res) {
+                                if (res.nextOrderPropmt === "YES") {
+                                    displayItems();
+                                } else {
+                                    console.log("\nThankyou for shopping with us.\n")
+                                    connection.end();
+
+                                }
+                            });
                         })
                 }
-                connection.end();
             });
     });
 };
