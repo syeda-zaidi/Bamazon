@@ -35,7 +35,7 @@ questionPrompt = () => {
             message: "Enter the ID of the product you want to buy. ",
             name: "purchaseID",
             validate: (value) => {
-                if (!isNaN(value)) {
+                if (!isNaN(value) && value > 0 && value < 11) {
                     return true;
                 } else {
                     return false;
@@ -47,7 +47,7 @@ questionPrompt = () => {
             message: "How many units of this product would you like to buy ?",
             name: "purchaseUnits",
             validate: (value) => {
-                if (!isNaN(value)) {
+                if (!isNaN(value) && value > 0) {
                     return true;
                 } else {
                     return false;
@@ -55,7 +55,36 @@ questionPrompt = () => {
             },
         },
     ]).then((answers) => {
-        connection.end()
+        connection.query("SELECT * FROM products WHERE ?",
+            {
+                item_id: answers.purchaseID,
+            },
+            function (err, res) {
+                if (err) throw err;
+                console.log(res);
+                console.log(res[0].stock_quantity);
+                if (res[0].stock_quantity < answers.purchaseUnits) {
+                    console.log("Insufficient Quantity !");
+                } else {
+                    console.log("\n --- purchase order placed ! ---\n ");
+                    console.log("\n updating inventory");
+                    connection.query("UPDATE products SET ? WHERE ?",
+                        [
+                            {
+                                stock_quantity: (res[0].stock_quantity - answers.purchaseUnits)
+                            },
+                            {
+                                item_id: answers.purchaseID
 
-    })
+                            }
+                        ], 
+                        function(err, res) {
+                            if (err) throw err;
+                            console.log("Inventory updated " + res.affectedRows + " row affected"); 
+                        })
+                }
+                connection.end();
+            });
+    });
 };
+
