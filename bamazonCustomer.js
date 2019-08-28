@@ -64,9 +64,15 @@ questionPrompt = () => {
                 console.log(res);
                 console.log(res[0].stock_quantity);
                 if (res[0].stock_quantity < answers.purchaseUnits) {
-                    console.log("Insufficient Quantity !");
+                    if (res[0].stock_quantity === 0) {
+                        console.log("This item is OUT OF STOCK!")
+                    } else if (res[0].stock_quantity > 0 && res[0].stock_quantity < answers.purchaseUnits) {
+                        console.log("Insufficient Quantity! The store only have " + res[0].stock_quantity + " available units for purchase.");
+                    }
                 } else {
                     console.log("\n --- purchase order placed ! ---\n ");
+                    var cost = answers.purchaseUnits * res[0].price;
+                    console.log("TOTAL cost of your purchase is : $" + cost);
                     console.log("\n updating inventory");
                     connection.query("UPDATE products SET ? WHERE ?",
                         [
