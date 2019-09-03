@@ -73,6 +73,9 @@ questionPrompt = () => {
                     console.log("\n --- purchase order placed ! ---\n ");
                     var cost = answers.purchaseUnits * res[0].price;
                     console.log("TOTAL cost of your purchase is : $" + cost);
+                    
+
+
                     console.log("\n updating inventory");
                     connection.query("UPDATE products SET ? WHERE ?",
                         [
