@@ -61,8 +61,6 @@ questionPrompt = () => {
             },
             function (err, res) {
                 if (err) throw err;
-                console.log(res);
-                console.log(res[0].stock_quantity);
                 if (res[0].stock_quantity < answers.purchaseUnits) {
                     if (res[0].stock_quantity === 0) {
                         console.log("This item is OUT OF STOCK!")
